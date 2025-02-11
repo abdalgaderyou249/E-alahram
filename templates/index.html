@@ -1,0 +1,198 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block content %}
+
+{% include 'core/navbar.html' %}
+
+<div class="container mt-2">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    a {
+      text-decoration: none;
+    }
+    /* Create a column layout with Flexbox */
+    .row {
+      display: flex;
+      flex-wrap: wrap; /* لضمان الاستجابة على الشاشات الصغيرة */
+    }
+    /* Left column (menu) */
+    .left {
+      flex: 35%;
+      padding: 15px 0;
+    }
+    .left input {
+      background-color: white;
+      border-radius: 9999px;
+      height: 45px;
+      width: 100%;
+      border: none;
+      padding-right: 30px;
+      font-size: 1.5rem;
+    }
+    .left h2 {
+      padding-left: 8px;
+    }
+    /* Right column (page content) */
+    .right {
+      flex: 65%;
+      padding: 15px;
+    }
+    /* Style the search box */
+    #mySearch {
+      width: 100%;
+      font-size: 15px;
+      padding: 11px;
+      border: 1px solid #ddd;
+    }
+    /* Style the navigation menu inside the left column */
+    #myMenu {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    #myMenu li a {
+      padding: 12px;
+      text-decoration: none;
+      color: black;
+      display: block;
+    }
+    #myMenu li a:hover {
+      background-color: #eee;
+    }
+    .footer {
+      background-color: #000016;
+      color: #fff;
+      padding: 2em;
+      display: flex;
+      justify-content: space-between;
+    }
+    .footer_tit {
+      font-size: 1.3em;
+      font-weight: 600;
+    }
+    .footer_tit span {
+      color: #3a6cf4;
+    }
+    .icons a {
+      color: #fff;
+      font-size: 1em;
+      padding-right: 15px;
+    }
+    .conte {
+      display: flex;
+      justify-content: center;
+      flex-direction: row-reverse;
+      flex-wrap: wrap;
+    }
+  
+    .icon {
+      font-size: 1.5em;
+      text-align: center;
+    }
+    .info {
+      text-align: center;
+    }
+    .info h3 {
+      color: blue;
+      font-size: 1.2em;
+      font-weight: 700;
+      margin: 10px;
+    }
+    .info h3:hover {
+      color: red;
+    }
+    
+   
+    .img-custom {
+      border: 3px solid #ddd;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 600px; 
+      margin: auto;     
+      display: block;
+    }
+  </style>
+
+  
+  <p>
+    <span class="text-info">Welcome to your platform</span> is a 
+    <span class="text-danger">free learning platform</span>,
+    where anyone can learn their desired course.
+  </p>
+
+  <div class="row">
+    <div class="left alert alert-info">
+      <h2>Courses</h2>
+      <input type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search.." title="Type in a category">
+      <ul id="myMenu">
+        {% if courses %}
+          {% for i in courses %}
+            <li>
+              <a href="{% url 'useropencourse' id=i.slug %}">{{ i.cname|capfirst }}</a>
+            </li>
+          {% endfor %}
+        {% else %}
+          <li><a href="#">No Course Yet</a></li>
+          <li>
+            <p class="mx-3">We are sorry for that, we have no course yet.</p>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+
+    <div class="right alert alert-success">
+      <h2>All Free Courses</h2>
+      <div class="container mt-2">
+        <img src="{% static 'cms/img/log2.jpg' %}" alt="Course Image" class="img-fluid img-custom">
+      </div>
+    </div>
+  </div>
+
+ 
+
+  <footer class="footer" id="content">
+    <p class="footer_tit">كل الحقوق محفوظه لدى <span>Alahram.net</span></p>
+    <div class="icon">
+      <a href="https://wa.me/+249969463497" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-whatsapp"></i>
+   
+      </a>
+      <a href="https://www.facebook.com/YourPageName" target="_blank" rel="noopener noreferrer">
+        <i class="fa-brands fa-facebook"></i>
+    
+      </a>
+      <a href="mailto:zyrwwn56@email.com">
+        <i class="fa-solid fa-envelope"></i>
+      
+      </a>
+    </div>
+  </footer>
+
+  <script>
+    function myFunction() {
+      var input, filter, ul, li, a, i;
+      input = document.getElementById("mySearch");
+      filter = input.value.toUpperCase();
+      ul = document.getElementById("myMenu");
+      li = ul.getElementsByTagName("li");
+      for (i = 0; i < li.length; i++) {
+        a = li[i].getElementsByTagName("a")[0];
+        if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+          li[i].style.display = "";
+        } else {
+          li[i].style.display = "none";
+        }
+      }
+    }
+  </script>
+</div>
+
+{% endblock content %}

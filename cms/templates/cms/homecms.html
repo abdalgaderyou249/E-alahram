@@ -1,0 +1,116 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}
+<title>Home CMS</title>
+{% endblock title %}
+
+{% block content %}
+
+{% include 'core/navbar.html' %}
+
+<style>
+    .welcome-message {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .welcome-message .lead {
+        font-size: 1.25rem;
+        font-weight: bold;
+    }
+
+    .welcome-message .text-success {
+        font-weight: bold;
+    }
+
+    .welcome-message p {
+        margin: 10px 0;
+    }
+
+    .welcome-message a {
+        text-decoration: none;
+        font-weight: bold;
+        margin-right: 10px;
+    }
+
+    .welcome-message .btn {
+        margin-right: 10px;
+    }
+</style>
+
+<div class="container mt-2">
+    {% if data %}
+
+    <div class="welcome-message">
+        {% for i in data %}
+            <p class="lead text-dark">Welcome <span class="text-success">{{ i.name | capfirst }}</span><br>{{ i.email }}</p>
+            <p>
+                <a href="{% url 'logoutcms' %}" class="btn btn-danger">Logout <i class="fa-solid fa-power-off"></i></a>
+                <a href="{% url 'addcourse' %}" class="btn btn-info">Add Course <i class="fas fa-plus-circle"></i></a>
+            </p>
+        {% endfor %}
+    </div>
+
+    <div class="container mt-2">
+        <h3 class="text-dark text-center">Your Courses</h3>
+    </div>
+
+    <div class="container" style='overflow-x:scroll;'>
+        {% if course %}
+        <input type="text" name="input" id="myInput" class="form-control mt-2" placeholder="Search Course">
+        <table class="table table-striped mt-2" id="myTable">
+            <th> Course Name </th>
+            <th> Description </th>
+            <th> Image </th>
+            <th> Updated </th>
+            <th> Action </th>
+
+            {% for i in course %}
+            <tr>
+                <td><p><b><a href="{% url 'opencourse' book=i.slug %}" class='text-dark'> {{i.cname | capfirst}}</a></b></p></td>
+
+                {% if i.disp == '' %}
+                <td>No Description</td>
+                {% else %}
+                <td>{{i.disp | slice:":15"}}..</td>
+                {% endif %}
+
+                {% if i.cimg == 'False' %}
+                <td>
+                    <img src="{% static 'cms/img/book.jpeg' %}" alt="default image" class="img-fluid" style='width:100px; height:100px;' title="this is the default image">
+                </td>
+                {% else %}
+                <td>
+                    <img src="{{ i.cimg.url }}" alt="course image" class="img-fluid" style='width:100px; height:100px;'>
+                </td>
+                {% endif %}
+
+                <td>{{i.dateof}}</td>
+
+                <td><a href="{% url 'deletecourse' book=i.slug %}" class="text-danger"><i class="fa fa-trash" aria-hidden="true"></i> Delete Course </a></td>
+               
+            </tr>
+
+            {% endfor %}
+
+        </table>
+        <script src="{% static 'cms/js/index.js' %}"></script>
+        {% else %}
+        <hr class="text-success">
+        <h3 class="text-center">No Courses Yet.</h3>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <h1>Something went wrong !!!</h1>
+    {% endif %}
+</div>
+
+{% endblock content %}

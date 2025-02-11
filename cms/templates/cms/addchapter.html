@@ -1,0 +1,179 @@
+{% extends 'core/base.html' %}
+<!DOCTYPE html>
+{% block title %}
+<title>Add Chapter</title>
+{% endblock title %}
+{% include 'core/navbar.html' %}
+{% block content %}
+<div class="page-container">
+    
+    
+    <style>
+        /* General Page Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            color: #444;
+        }
+    
+        /* Container for all page content */
+        .page-container {
+            max-width: 950px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+    
+        /* Welcome Section */
+        .welcome-section {
+            text-align: center;
+            background-color: #00796b;
+            color: white;
+            padding: 40px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+    
+        .welcome-section span {
+            color: #ffeb3b;
+        }
+    
+        .btn-container {
+            margin-top: 20px;
+        }
+    
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: bold;
+            margin: 12px 20px;
+            transition: background-color 0.3s;
+        }
+    
+        .logout-btn {
+            background-color: #e91e63;
+            color: white;
+        }
+    
+        .my-courses-btn {
+            background-color: #3f51b5;
+            color: white;
+        }
+    
+        .btn:hover {
+            background-color: #00695c;
+        }
+    
+        /* Add Chapter Section */
+        .add-course-section {
+            padding: 30px;
+            background-color: #fafafa;
+            border-radius: 10px;
+        }
+    
+        .add-course-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+            text-align: center;
+            font-weight: 600;
+        }
+    
+        .form-label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+            color: #555;
+        }
+    
+        .form-input {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+    
+        .form-input:focus {
+            border-color: #00796b;
+            outline: none;
+        }
+    
+        .submit-btn {
+            background-color: #00796b;
+            color: white;
+            padding: 14px 30px;
+            font-size: 1.2em;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            border: none;
+        }
+    
+        .submit-btn:hover {
+            background-color: #004d40;
+        }
+    
+        .alert {
+            font-size: 1.1em;
+            padding: 12px;
+            margin-bottom: 15px;
+        }
+    </style>
+
+    <!-- Messages -->
+    {% if messages %}
+        {% for k in messages %}
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>{{ k }}</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Welcome Section -->
+    <div class="welcome-section">
+        <h2>Welcome to the Teacher Portal</h2>
+        <p>Hello, <span>{{ name | capfirst }}</span></p>
+        <p>{{ email }}</p>
+        <div class="btn-container">
+            <a href="{% url 'logoutcms' %}" class="btn logout-btn">Logout <i class="fa-solid fa-power-off"></i></a>
+            <a href="{% url 'home' %}" class="btn my-courses-btn">My Courses <i class="fas fa-book"></i></a>
+        </div>
+    </div>
+
+    <!-- Add Chapter Section -->
+    <div class="add-course-section">
+        <h3>Add Chapter to <span class="text-danger">"{{ subject }}"</span></h3>
+        <form action="" method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <label for="title" class="form-label">Chapter Name</label>
+            <input type="text" name="title" id="title" class="form-input" placeholder="Enter Chapter Name" required>
+
+            <label for="number" class="form-label">Chapter Number</label>
+            <input type="number" name="number" id="number" class="form-input" placeholder="Enter Chapter Number" required>
+
+            <label for="disp" class="form-label">Chapter Description</label>
+            <textarea name="disp" id="disp" class="form-input" placeholder="Enter Chapter Description"></textarea>
+
+            <label for="img" class="form-label">Upload Chapter Image</label>
+            <input type="file" name="chimg" id="img" class="form-input" multiple accept="image/*">
+
+            <label for="file" class="form-label">Upload Files (PDFs and Videos)</label>
+            <input type="file" name="chfiles" id="file" class="form-input" multiple accept=".doc,.docx,.pdf,.mp4,.mkv">
+            
+            <input type="submit" value="Add Chapter" class="btn submit-btn">
+        </form>
+    </div>
+</div>
+
+{% endblock content %}

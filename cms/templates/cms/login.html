@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    <title>Login</title>
+{% endblock title %}
+
+{% block content %}
+
+{% include 'core/navbar.html' %}
+
+<style>
+    .container-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+    }
+    .card-custom {
+        width: 100%;
+        max-width: 400px;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+    }
+    .btn-custom {
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn-custom:hover {
+        background-color: #0056b3;
+    }
+    .text-link {
+        text-decoration: none;
+        color: #007bff;
+    }
+    .text-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="container-wrapper">
+    <div class="card-custom">
+        <h3 class="text-center text-primary mb-3">Login</h3>
+        
+        {% if messages %}
+            {% for message in messages %} 
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <strong>{{ message }}</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Enter your email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" name="password" id="password" class="form-control" placeholder="Enter your password" required>
+            </div>
+            <button type="submit" class="btn-custom">Log in</button>
+        </form>
+        <hr>
+       
+    </div>
+</div>
+
+{% endblock content %}

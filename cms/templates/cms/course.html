@@ -1,0 +1,251 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+
+{% block title %}
+    <title>Course</title>
+{% endblock title %}
+
+{% block content %}
+    {% include 'core/navbar.html' %}
+    <style>
+        /* 🌟 إعدادات عامة */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* 🌟 تنسيق الحاوية الرئيسية */
+.container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 25px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 🌟 تنسيق شريط الترحيب */
+.alert-info {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 15px;
+    background: linear-gradient(135deg, #007bff, #00c6ff);
+    color: white;
+    border-radius: 8px;
+}
+
+/* 🌟 رسالة الترحيب */
+.welcome-message {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.welcome-message p {
+    font-size: 1.2rem;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 🌟 الأزرار */
+.btn {
+    display: inline-block;
+    padding: 12px 20px;
+    font-size: 1rem;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-info {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.85;
+    transform: scale(1.05);
+}
+
+/* 🌟 تفاصيل الكورس */
+.course-details {
+    margin-top: 30px;
+}
+
+.course-details h2 {
+    text-align: center;
+    color: #007bff;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* 🌟 الشريط الجانبي */
+.sidebar {
+    background: #f1f3f7;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar h3 {
+    text-align: center;
+    color: #333;
+    font-weight: bold;
+}
+
+/* 🌟 قائمة الفصول */
+.list-group-item {
+    padding: 12px;
+    font-size: 1rem;
+    transition: 0.3s ease-in-out;
+    border-radius: 6px;
+}
+
+.list-group-item:hover {
+    background-color: #007bff;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* 🌟 صورة أو فيديو الكورس */
+.course-img video {
+    width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+/* 🌟 وصف الكورس */
+.course-description {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 400;
+}
+
+/* 🌟 أزرار العمليات */
+.actions {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.actions a {
+    margin: 10px;
+}
+
+    </style>
+
+    <div class="container mt-4">
+        <div class="alert alert-info text-center">
+            <strong>Teacher Portal</strong>
+        </div>
+
+        <div class="welcome-message text-center">
+            <p class="lead text-dark">Welcome <span class="text-success">{{ name | capfirst }}</span><br> {{ email }}</p>
+            <p>
+                <a href="{% url 'logoutcms' %}" class="btn btn-danger">Logout <i class="fa-solid fa-power-off"></i></a>
+                <a href="{% url 'home' %}" class="btn btn-primary">My Courses <i class="fas fa-book"></i></a>
+            </p>
+        </div>
+        
+        <hr>
+
+        {% if course %}
+            {% for i in course %}
+                <div class="course-details">
+                    <h2 class="text-center">Course Details</h2>
+                    <a href="{% url 'addchapter' book=i.slug %}" class="btn btn-info mt-2">Add Chapter</a>
+
+                    <div class="row mt-3">
+                        <!-- Left column: Chapters -->
+                        <div class="col-md-4">
+                            <div class="sidebar p-3 border rounded">
+                                <h3>Chapters</h3>
+                                <input type="text" id="mySearch" onkeyup="myFunction()" placeholder="Search chapters..." class="form-control mb-3">
+                                <ul id="myMenu" class="list-group">
+                                    {% if chapters %}
+                                        {% for chapter in chapters %}
+                                            <li class="list-group-item">
+                                                <a href="{% url 'openchapter' book=subjectslug chapterslug=chapter.slug %}">{{ chapter.title | capfirst }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    {% else %}
+                                        <li class="list-group-item">No chapters found</li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Right column: Course Content -->
+                        <div class="col-md-8">
+                            {% if ch %}
+                                <h3>{{ i.cname | capfirst }}</h3>
+                                <div class="course-img text-center">
+                                    {% if i.cimg == 'False' %}
+                                        <img src="{% static 'cms/img/book.jpeg' %}" alt="Default image" class="img-fluid rounded" title="Default image">
+                                    {% else %}
+                                        <img src="{{ i.cimg.url }}" alt="Course image" class="img-fluid rounded">
+                                    {% endif %}
+                                </div>
+                                <div class="course-description mt-3">
+                                    <h4>Course Description</h4>
+                                    {% if i.disp %}
+                                        <p>{{ i.disp | capfirst }}</p>
+                                    {% else %}
+                                        <p>No description available</p>
+                                    {% endif %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="actions mt-3 text-center">
+                        <a href="{% url 'deletechapter' id=i.slug book=subjectslug %}" class="btn btn-danger">Delete Chapter</a>
+                        <a href="{% url 'addcontent' id=i.slug book=subjectslug %}" class="btn btn-success">Add Content</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <h3 class="text-center text-muted">No Courses Available</h3>
+        {% endif %}
+    </div>
+
+    <script>
+        function myFunction() {
+            var input, filter, ul, li, a, i;
+            input = document.getElementById("mySearch");
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("myMenu");
+            li = ul.getElementsByTagName("li");
+
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[0];
+                if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                    li[i].style.display = "";
+                } else {
+                    li[i].style.display = "none";
+                }
+            }
+        }
+    </script>
+{% endblock content %}

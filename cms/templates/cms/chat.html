@@ -1,0 +1,236 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    <title>Chatbot</title>
+{% endblock title %}
+
+{% block content %}
+
+{% include 'core/navbar.html' %}
+<h2 style=" text-align: center;">Chatbot</h2>
+
+  
+  <div id="chat-container">
+    <div id="chat-box">
+        <div class="message bot">مرحبا! كيف يمكنني مساعدتك؟</div>
+    </div>
+    <div id="user-input">
+        <input type="text" id="user-message" placeholder="أرسل رسالتك...">
+        <button id="send-message">إرسال</button>
+    </div>
+  </div>
+  <style>
+   /* تنسيق الجسم الرئيسي */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* تنسيق الهيدر */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px 0;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* تنسيق الحاوية الرئيسية */
+#chat-container {
+    width: 100%;
+    max-width: 800px;
+    margin: 30px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+}
+
+/* تنسيق صندوق الشات */
+#chat-box {
+    height: 400px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+/* تنسيق الرسائل */
+.message {
+    padding: 12px 18px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    max-width: 70%;
+    word-wrap: break-word;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: all 0.3s ease;
+}
+
+/* تنسيق رسالة البوت */
+.bot {
+    background-color: #f1f1f1;
+    text-align: left;
+    margin-left: 10px;
+}
+
+/* تنسيق رسالة المستخدم */
+.user {
+    background-color: #007bff;
+    color: white;
+    text-align: right;
+    float: right;
+    margin-right: 10px;
+}
+
+/* تنسيق حقل الإدخال */
+#user-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 12px;
+}
+
+/* تنسيق حقل إدخال الرسالة */
+#user-message {
+    width: 80%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+    background-color: #fff;
+    transition: all 0.3s ease;
+}
+
+#user-message:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* تنسيق زر الإرسال */
+#send-message {
+    width: 15%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+#send-message:hover {
+    background-color: #0056b3;
+}
+
+/* تأثير التحميل (spinner) */
+.loading-spinner {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #007bff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* تنسيق الفوتر */
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    font-size: 14px;
+}
+
+/* تنسيق الروابط */
+a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+</style>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script>
+    function sendMessage() {
+        const userInput = document.getElementById('user-message').value.trim();
+        if (userInput === '') return;  // لا إرسال إذا كانت الرسالة فارغة
+
+        console.log("Sending message:", userInput);  // تأكد من الرسالة
+
+        addMessage('user', userInput);  // إضافة رسالة المستخدم إلى الـ chat
+        document.getElementById('user-message').value = '';  // مسح حقل الإدخال
+
+        // إضافة تأثير التحميل
+        addMessage('bot', '<div class="loading-spinner"></div>');
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'generate_response' %}",  // استخدام الرابط الصحيح في urls.py
+            data: {
+                'user_message': userInput,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                console.log("Response:", response);  // عرض الاستجابة
+                // استبدال التأثير بالرد الفعلي
+                updateBotMessage(response.response);
+            },
+            error: function(error) {
+                console.log("Error:", error);  // عرض الخطأ إذا حدث
+                updateBotMessage('حدث خطأ، حاول مرة أخرى.');  // رسالة خطأ من البوت
+            }
+        });
+    }
+
+    // إضافة رسالة جديدة إلى الـ chat
+    function addMessage(role, content) {
+        const chatBox = document.getElementById('chat-box');
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('message', role);
+        messageDiv.innerHTML = content;
+        chatBox.appendChild(messageDiv);
+        chatBox.scrollTop = chatBox.scrollHeight;  // التمرير إلى الأسفل لعرض الرسائل الجديدة
+    }
+
+    // تحديث رسالة البوت بعد الرد
+    function updateBotMessage(content) {
+        const lastMessage = document.querySelector('#chat-box .message.bot:last-child');
+        lastMessage.innerHTML = content;
+    }
+
+    // ربط زر "إرسال" بحدث click
+    document.getElementById('send-message').addEventListener('click', sendMessage);
+
+    // إرسال الرسالة عند الضغط على "Enter"
+    document.getElementById('user-message').addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage();
+        }
+    });
+  </script>
+
+{% endblock %}
